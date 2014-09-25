@@ -8,7 +8,7 @@ Demonstrações
 Sessões técnicas (1 até 15)
 GranDIHC-BR - Grandes Desafios de IHC no Brasil
 IHC na Prática
-Competição de Avaliação (?)
+Competição de Avaliação (?) // sim, mas como não temos ainda as pares. fica “vazio” (explico ali embaixo)
 
 /* Eventos */
 Minicurso 1 - Criando um restaurante interativo: curso prático de prototipagem da experiência
@@ -22,8 +22,10 @@ WTDIHC - I Workshop de Teses e Dissertações em IHC
 Palestra de abertura
 Palestra de encerramento
 Reunião da comunidade de IHC
+Papers (todos)
+Competição de avaliação (se tivermos os nomes das apresentações tiramos isso e colocamos as apresentações)
 
 /* O que vai ser isso? */
-Jantar
-Coquetel de abertura
-IHC Walk & Run
+Jantar //Programa + Evento pra não ter dor de cabeça OOOU Programa “Social” e evento Jantar da Comunidade 
+Coquetel de abertura // Programa +Evento OOOU “Programa Social” e Evento “Coquetel”
+IHC Walk & Run // Same as before

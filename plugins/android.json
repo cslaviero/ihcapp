@@ -19,6 +19,10 @@
                         {
                             "xml": "<feature name=\"Vibration\"><param name=\"android-package\" value=\"org.apache.cordova.vibration.Vibration\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"sqlDB\"><param name=\"android-package\" value=\"me.rahul.plugins.sqlDB.sqlDB\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -35,6 +39,10 @@
                         {
                             "xml": "<uses-permission android:name=\"android.permission.VIBRATE\" />",
                             "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+                            "count": 1
                         }
                     ]
                 }
@@ -49,6 +57,9 @@
             "PACKAGE_NAME": "com.ihc.ihcapp"
         },
         "org.apache.cordova.vibration": {
+            "PACKAGE_NAME": "com.ihc.ihcapp"
+        },
+        "me.rahul.plugins.sqlDB": {
             "PACKAGE_NAME": "com.ihc.ihcapp"
         }
     },

@@ -16,11 +16,29 @@ ihc.app = {
 		        'Congratulations',            // title
 		        'Done'                      // buttonName
 		        );
+         /*var db = window.sqlitePlugin.openDatabase({name: "ihc.db"});*/
+        function dbcopy()
+        {
+            window.plugins.sqlDB.copy("ihc.db",copysuccess,copyerror);
+        }
+
+        function copysuccess()
+        {
+        console.log("SUCESSO NA COPIA DO DB (sera?)");
+        }
+
+        function copyerror (e)
+        {
+            //db already exists or problem in copying the db file. Check the Log.
+            console.log("Error = "+JSON.stringify(e));
+        }
+        // copia o banco mano!
+        dbcopy();
 
         // db.transaction
         // db.openDatabase
         // db.executeSql
-        var db = window.sqlitePlugin.openDatabase({name: "ihc.db"});
+/*        var db = window.sqlitePlugin.openDatabase({name: "ihc.db"});
         console.log ("IHC: banco aberto")
 
         db.transaction(function (tx){
@@ -34,7 +52,7 @@ ihc.app = {
                         });
 
 
-        },function (e){console.log("ERRORIHCindex.js: "+e.message)});
+        },function (e){console.log("ERRORIHCindex.js: "+e.message)});*/
 
     },
 
