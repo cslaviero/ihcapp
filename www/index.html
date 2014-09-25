@@ -46,6 +46,10 @@ SOFTWARE.
 		function onLoad(){
 			ihc.app.initialize();
 		}
+
+		function teste(){
+			$('#program_title').text('ST1 - Educação e Games');
+		}
 	</script>
 
 <body onload="onLoad()">
@@ -53,20 +57,21 @@ SOFTWARE.
 <div data-role="page" id="home">
 
 	<div data-role="header" data-position="fixed">
-		<h1>Programação</h1><a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Configurar</a>
+		<h1>IHC 2014</h1>
+		<!-- <a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Configurar</a> -->
 	</div>
 
 	<div role="main" class="ui-content" id="home-content">
 		<center><img src='icon.png'/></center>
-		<p>Agora no IHC14:</p>
-		<p>Sala 1:<div id="agora1"></div></p>
+		<!-- <p>Agora no IHC14:</p> -->
+		<!-- <p>Sala 1:<div id="agora1"></div></p>
 		<p>Sala 2:<div id="agora2"></div></p>
 		<p>Sala 3:<div id="agora3"></div></p>
-		<p>Sala 4:<div id="agora4"></div></p>
-		<p><a id="teste" href="#" onclick="showAlert(); return false;">Atualizar dados (melhorar nome/botao)</a></p>
+		<p>Sala 4:<div id="agora4"></div></p> -->
+		<!-- <p><a id="teste" href="#" onclick="showAlert(); return false;">Atualizar dados (melhorar nome/botao)</a></p> -->		
 		<a href="favorites.html" class="ui-btn">Favorites</a>
 		<p>
-		<a href="#program" class="ui-btn" onclick="navigator.notification.alert('oi',function(){},'ok','ok');">Program</a>
+		<a href="#program" class="ui-btn">Program</a>
 		<a href="#keynotes" class="ui-btn">Keynote Speakers</a>
 		<a href="#comitee" class="ui-btn">Commitee</a>
 		<a href="#about" class="ui-btn">About</a>
@@ -74,18 +79,36 @@ SOFTWARE.
 	</div>
 </div>
 
-<!-- PROGRAM Page -->
+<!--PROGRAM PAGE-->
+<div data-role="page" id="program">
+
+	<div data-role="header" data-position="fixed">
+		<h1> <img src='icon.png' width="20px" height="20px"/> Program</h1>
+		<a href="#home" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Back</a>
+		<!-- <a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Settings</a> -->
+	</div>
+
+	<div role="main" class="ui-content" id="home-content">
+		
+		<a href="#program_day" class="ui-btn"> October 27th</a>
+		<a href="#program_day" class="ui-btn">October 28th</a>
+		<a href="#program_day" class="ui-btn">October 29th</a>
+		<a href="#program_day" class="ui-btn">October 30th</a>
+		<a href="#program_day" class="ui-btn">October 31th</a>
+	</div>
+</div>
+
+<!-- PROGRAM DAY Page -->
 <div data-role="page" id="program_day">
 	<div data-role="header" data-position="fixed">
-		<h1>Programacao</h1>
-		<a href="index.html" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Voltar</a>
-		<a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Configurar</a>
+		<h1>Program by Day</h1>
+		<a href="#program" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Back</a>
 	</div>
 	<style>
 		#divider_dia {background-color:rgb(180,200,180);}
 	</style>
 	<div role="main" class="ui-content">
-	    <h2>Programação - Sala 1 </h2>
+	    <h2>Program on October 27th </h2>
 		
 	    <ul data-role="listview" data-inset="true" data-filter="true"	>
 	    	
@@ -93,7 +116,9 @@ SOFTWARE.
 	    	<li id="divider_dia" data-role="list-divider">Segunda,27 de Outubro,2014 <span class="ui-li-count">2</span>
 	    	
 	    	<li data-role="list-divider">09:00-10:00</li>
-	    	<li><a href="#details-weber" data-transition="pop" >
+	    	<li class="line">
+	    		<!-- Na hora de criar estes eventos eu dou um append e crio o html na mão. aí coloco um onclick="addProgramDetails(id_program", aonde puxo tudo do evento e coloco na página details-program -->
+	    		<a href="#details_program" onclick="teste();" data-transition="pop" >
 	    		<h2>Sessão Técnica 1</h2>
 	    		<p>Aspectos Culturais em IHC e Semiótica</p>
 	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
@@ -193,93 +218,29 @@ SOFTWARE.
 	    		<p class="ui-li-aside"><strong>12:00-14:00</strong></p>
 	    	</a></li>
 			<!-- FIM 31/OUTUBRO -->	    	
-	    	
 	    </ul>
-
 	</div>
 </div>
 
+<!-- DETAILS_PROGRAM PAGE -->
+<div data-role="page" id="details_program">
 
-
-<div data-role="page" id="next">
 	<div data-role="header" data-position="fixed">
-		<h1>Programação</h1><a href="#home" data-transition="slide" data-direction="reverse" data-icon="arrow-l" class="ui-btn-left">Início</a>
+		<h1 id="program_title">Generic Text</h1>
+		<a href="#program_day" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Back</a>
 	</div>
-
-	<div role="main" class="ui-content">
-	    <h2>Programação - Sala 1 </h2>
-		
-	    <ul data-role="listview" data-inset="true">
-	    	<li data-role="list-divider">Friday, October 8, 2010 <span class="ui-li-count">2</span></li>
-	    	<li><a href="#details-weber" data-transition="pop" >
-	    		<h2>Stephen Weber</h2>
-	    		<p><strong>You've been invited to a meeting at Filament Group in Boston, MA</strong></p>
-	    		<p>Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the jQuery team.</p>
-	    		<p class="ui-li-aside"><strong>6:24</strong>PM</p>
-	    	</a></li>
-	    	<li><a href="index.html">
-	    		<h2>jQuery Team</h2>
-	    		<p><strong>Boston Conference Planning</strong></p>
-	    		<p>In preparation for the upcoming conference in Boston, we need to start gathering a list of sponsors and speakers.</p>
-	    		<p class="ui-li-aside"><strong>9:18</strong>AM</p>
-	    	</a></li>
-	    	<li data-role="list-divider">Thursday, October 7, 2010 <span class="ui-li-count">1</span></li>
-	    	<li><a href="index.html">
-	    		<h2>Avery Walker</h2>
-	    		<p><strong>Re: Dinner Tonight</strong></p>
-	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
-	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
-	    	</a></li>
-	    		    	<li><a href="index.html">
-	    		<h2>Avery Walker</h2>
-	    		<p><strong>Re: Dinner Tonight</strong></p>
-	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
-	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
-	    	</a></li>
-	    		    	<li><a href="index.html">
-	    		<h2>Avery Walker</h2>
-	    		<p><strong>Re: Dinner Tonight</strong></p>
-	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
-	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
-	    	</a></li>
-	    		    	<li><a href="index.html">
-	    		<h2>Avery Walker</h2>
-	    		<p><strong>Re: Dinner Tonight</strong></p>
-	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
-	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
-	    	</a></li>
-	    		    	<li><a href="index.html">
-	    		<h2>Avery Walker</h2>
-	    		<p><strong>Re: Dinner Tonight</strong></p>
-	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
-	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
-	    	</a></li>
-	    </ul>
-
-	</div>
-</div>
-
-<div data-role="page" id="settings">
-	<div data-role="header" data-position="fixed">
-		<h1>Settings</h1><a href="#home" data-transition="slideup" data-direction="reverse" data-icon="check" class="ui-btn-right">Pronto</a>
-	</div>
-
-	<div role="main" class="ui-content">
-		<h2>Configurar</h2>
-		Oi!
-	</div>
-</div>
-
-
-<div data-role="page" id="details-weber">
-	<div data-role="header" data-position="fixed">
-		<h1>IHC14</h1><a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Configurar</a>
-	</div>
-
 	<div role="main" class="ui-content" id="home-content">
-		<h2>Stephen Weber</h2>
-		<p>Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the jQuery team.</p>
+		
+		<!-- Aqui eu puxo os dados pra preencher a página antes de abrir. -->
+		<h2>Presentions in this "Event</h2>
+		<h3>Teacher's Presence Mediated by Virtual Learning Environment Interfaces: Evidences of the Self</h3>
+		Luciana Espindola<br>
+		Milene Silveira
+		==
+		
+		
 	</div>
+	<!-- I could add a footer if I want. -->
 </div>
 
 <script type="text/javascript" src="lib/fastclick/js/fastclick.js"></script>
