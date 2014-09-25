@@ -1,0 +1,29 @@
+
+/* Programas */
+Minucursos
+Workshops
+Palestras
+Pôsteres
+Demonstrações
+Sessões técnicas (1 até 15)
+GranDIHC-BR - Grandes Desafios de IHC no Brasil
+IHC na Prática
+Competição de Avaliação (?)
+
+/* Eventos */
+Minicurso 1 - Criando um restaurante interativo: curso prático de prototipagem da experiência
+Minicurso 2 - Acessibilidade e Inclusão Digital
+Minicurso 3 - Aplicando Análise Estatística de Dados de Interação de Larga Escala no Design Centrado no Usuário
+Minicurso 4 - Visualização de Informação: introdução e influências de IHC
+Minicurso 5 - Design da Interação Humano-Computador com MoLIC
+WCIHC - I Workshop sobre questões Culturais em IHC
+WEIHC - V Workshop sobre Ensino de IHC
+WTDIHC - I Workshop de Teses e Dissertações em IHC
+Palestra de abertura
+Palestra de encerramento
+Reunião da comunidade de IHC
+
+/* O que vai ser isso? */
+Jantar
+Coquetel de abertura
+IHC Walk & Run
