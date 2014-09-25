@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+The MIT License (MIT)
+
+Copyright (c) 2014 Cleyton Slaviero
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<head>	
+	<meta charset="utf-8">
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, target-densitydpi=device-dpi" />
+
+	<title>IHC 14</title>
+
+	<link rel="stylesheet" href="css/index.css">
+	<link rel="stylesheet" href="lib/jquery-mobile/css/jquery.mobile-1.4.0.min.css" />
+	<!-- JQUERY -->
+	<script type="text/javascript" src="lib/jquery/jquery.js"> </script>
+	<!-- CORDOVA -->
+	<script type="text/javascript" src="cordova.js"></script>
+
+	<script type="text/javascript" src="lib/jquery-mobile/js/jquery-1.11.0.min.js"></script>
+
+	<script type="text/javascript" src="lib/jquery-mobile/js/jquery.mobile-1.4.0.min.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+</head>
+<script type="text/javascript">
+		
+		function onLoad(){
+			ihc.app.initialize();
+		}
+
+
+// IHC app pega na inicialização atualização de dados e insere no banco. 
+// pegar via JSON e passar pro banco
+	//pedir dados do banco (como?)
+
+	/*function httpGet(theUrl)
+	{
+		var xmlHttp = null;
+		var theUrl = "http://10.0.0.4:8000/ihcapp/getData/index.lua";
+		xmlHttp = new XMLHttpRequest();
+		xmlHttp.open( "GET", theUrl, false );
+		try{
+			xmlHttp.send();
+		}catch (err){
+			console.log(err.message);
+		}
+		console.log(xmlHttp.responseText);
+		return xmlHttp.responseText;
+	}*/
+
+	/* var response = httpGet();*/
+
+/*	var obj = JSON.parse(response);*/
+/*	console.log(obj.name);*/
+	/*navigator.vibrate(240);*/
+
+	$.ajax({
+	  type: "GET",
+	  dataType: "json",
+	  url: "http://10.0.0.4:8000/ihcapp/getData/index.lua",
+	  success: onSuccess,
+	  error: deuError
+	});
+
+
+/*	jQuery.getJSON("http://192.168.0.102:8000/ihcapp/getData/index.lua?callback=?",onSuccess);*/
+	function onSuccess (data,textStatus){
+		
+		try{
+			obj = JSON.parse(JSON.stringify(data));
+		}catch(err){
+			console.log("error on json parsing: "+err.message);
+		}
+
+		/*navigator.vibrate(240);*/
+		
+		console.log(obj.name);
+		navigator.notification.alert(
+			obj.name,
+			function() {//por exemplo jogar no banco de dados o resultado ;)
+			}, //do something 
+	        'Funcionou JSON',          // title
+	        'Beleza'       // buttonName
+	        );
+	}
+
+	function deuError (jqXHR, textStatus, errorThrown) {
+		console.log("deu ruim o ajax: "+textStatus+" "+errorThrown);
+	}
+
+
+		function showAlert() {
+			var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ console.log("deu BOM no banco");},function(tx,res){ console.log("deu RUIM no banco");});
+			
+			/*db.transaction(function (tx){
+				tx.executeSql('CREATE TABLE IF NOT EXISTS foo (id INT, txt VARCHAR(50))',function(tx,res){ console.log("deu BOM no insert");},function(err){ console.log("deu RUIM no insert: "+err.message);});
+			});*/
+			db.transaction(function (tx){
+
+					tx.executeSql('SELECT * FROM test_table', [], 
+        			function (tx, results) {
+ 	          			len = results.rows.length;
+ 	          			navigator.vibrate(250);		
+ 	          			navigator.notification.alert(
+			                len,           // message
+			                function() {}, //do something 
+			                'N resultados',          // title
+			                'Beleza'       // buttonName
+			                );
+
+              		/*	for (i = 0; i < len; i++) {
+			              var res =results.rows.item(i).text;
+			                
+			                navigator.notification.alert(
+			                res,           // message
+			                function() {}, //do something 
+			                'DB',          // title
+			                'Certo'       // buttonName
+			                );
+			              }*/
+         			},
+         			function (err){console.log("ERRORIHC: "+err.message);}
+         			);
+			
+			},function (e){console.log("ERRORIHC2: "+e.message)});
+
+		}
+
+	</script>
+
+<body onload="onLoad()">
+
+<div data-role="page" id="home">
+
+	<div data-role="header" data-position="fixed">
+		<h1>Programação</h1><a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Configurar</a>
+	</div>
+
+	<div role="main" class="ui-content" id="home-content">
+		<center><img src='icon.png'/></center>
+		<p>Agora no IHC14:</p>
+		<p>Sala 1:<div id="agora1"></div></p>
+		<p>Sala 2:<div id="agora2"></div></p>
+		<p>Sala 3:<div id="agora3"></div></p>
+		<p>Sala 4:<div id="agora4"></div></p>
+		<p><a id="teste" href="#" onclick="showAlert(); return false;">Atualizar dados (melhorar nome/botao)</a></p>
+		<a href="favorites.html" class="ui-btn">Meus Favoritos</a>
+		<p>
+		<a href="program.html" class="ui-btn">Programação</a>
+		<a href="keynotes.html" class="ui-btn">Keynote Speakers</a>
+		<a href="comitee.html" class="ui-btn">Comitês</a>
+		<a href="about.html" class="ui-btn">Sobre</a>
+		<a href="comites.html" class="ui-btn">(?)Sessões Técnicas </a>
+		<a href="#next" class="ui-btn">(?)Eventos</a>
+	</div>
+</div>
+
+<div data-role="page" id="next">
+	<div data-role="header" data-position="fixed">
+		<h1>Programação</h1><a href="#home" data-transition="slide" data-direction="reverse" data-icon="arrow-l" class="ui-btn-left">Início</a>
+	</div>
+
+	<div role="main" class="ui-content">
+	    <h2>Programação - Sala 1 </h2>
+		
+	    <ul data-role="listview" data-inset="true">
+	    	<li data-role="list-divider">Friday, October 8, 2010 <span class="ui-li-count">2</span></li>
+	    	<li><a href="#details-weber" data-transition="pop" >
+	    		<h2>Stephen Weber</h2>
+	    		<p><strong>You've been invited to a meeting at Filament Group in Boston, MA</strong></p>
+	    		<p>Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the jQuery team.</p>
+	    		<p class="ui-li-aside"><strong>6:24</strong>PM</p>
+	    	</a></li>
+	    	<li><a href="index.html">
+	    		<h2>jQuery Team</h2>
+	    		<p><strong>Boston Conference Planning</strong></p>
+	    		<p>In preparation for the upcoming conference in Boston, we need to start gathering a list of sponsors and speakers.</p>
+	    		<p class="ui-li-aside"><strong>9:18</strong>AM</p>
+	    	</a></li>
+	    	<li data-role="list-divider">Thursday, October 7, 2010 <span class="ui-li-count">1</span></li>
+	    	<li><a href="index.html">
+	    		<h2>Avery Walker</h2>
+	    		<p><strong>Re: Dinner Tonight</strong></p>
+	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
+	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
+	    	</a></li>
+	    		    	<li><a href="index.html">
+	    		<h2>Avery Walker</h2>
+	    		<p><strong>Re: Dinner Tonight</strong></p>
+	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
+	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
+	    	</a></li>
+	    		    	<li><a href="index.html">
+	    		<h2>Avery Walker</h2>
+	    		<p><strong>Re: Dinner Tonight</strong></p>
+	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
+	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
+	    	</a></li>
+	    		    	<li><a href="index.html">
+	    		<h2>Avery Walker</h2>
+	    		<p><strong>Re: Dinner Tonight</strong></p>
+	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
+	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
+	    	</a></li>
+	    		    	<li><a href="index.html">
+	    		<h2>Avery Walker</h2>
+	    		<p><strong>Re: Dinner Tonight</strong></p>
+	    		<p>Sure, let's plan on meeting at Highland Kitchen at 8:00 tonight. Can't wait!</p>
+	    		<p class="ui-li-aside"><strong>4:48</strong>PM</p>
+	    	</a></li>
+	    </ul>
+
+	</div>
+</div>
+
+<div data-role="page" id="settings">
+	<div data-role="header" data-position="fixed">
+		<h1>Settings</h1><a href="#home" data-transition="slideup" data-direction="reverse" data-icon="check" class="ui-btn-right">Pronto</a>
+	</div>
+
+	<div role="main" class="ui-content">
+		<h2>Configurar</h2>
+		Oi!
+	</div>
+</div>
+
+
+<div data-role="page" id="details-weber">
+	<div data-role="header" data-position="fixed">
+		<h1>IHC14</h1><a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Configurar</a>
+	</div>
+
+	<div role="main" class="ui-content" id="home-content">
+		<h2>Stephen Weber</h2>
+		<p>Hey Stephen, if you're available at 10am tomorrow, we've got a meeting with the jQuery team.</p>
+	</div>
+</div>
+
+<script type="text/javascript" src="lib/fastclick/js/fastclick.js"></script>
+<script type="text/javascript" src="lib/handlebars/js/handlebars-v1.3.0.js"></script>
+
+</body>
+</html>

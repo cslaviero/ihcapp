@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- 
+App-o-Mat jQuery Mobile Cordova starter template
+Copyright 2014 Lou Franco
+https://github.com/app-o-mat/jqm-cordova-template-project
+http://app-o-mat.com
+
+MIT License
+https://github.com/app-o-mat/jqm-cordova-template-project/LICENSE.md
+-->
+
+<!-- change the widget id to your id and update the version as appropriate -->
+<widget id="com.ihc.ihcapp" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+
+	<!-- Edit to match the details of your app -->
+    <name>IHC14</name>
+    <description>
+        App do Simpósio Brasileiro de Fatores Humanos em Sistemas Computacionais - 2014.
+    </description>
+    <author email="cslaviero@gmail.com">
+        Cleyton Slaviero
+    </author>
+	<!-- END App Details -->
+
+    <content src="index.html" />
+    <access origin="*" />
+    <access origin="http://10.0.0.4" />
+    <!-- <access origin="https://example.com" /> allow any secure requests to example.com -->
+    <!-- <access origin="https://example.com" subdomains="true" /> such as above, but including subdomains, such as www -->
+
+    <platform name="android">
+        <icon src="www/icon.png"/>
+        <!-- <preference name="Fullscreen" value="true" /> -->
+    </platform>
+
+	<!-- uses cordova plugin add org.apache.cordova.statusbar to make iOS7 statusbar look right-->
+	<!-- <preference name="StatusBarOverlaysWebView" value="false" /> -->
+	<!-- edit this to the background color of your app -->
+	<!-- <preference name="StatusBarBackgroundColor" value="#595b5b" /> -->
+    
+</widget>
