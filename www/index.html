@@ -43,108 +43,9 @@ SOFTWARE.
 	<script type="text/javascript" src="js/index.js"></script>
 </head>
 <script type="text/javascript">
-		
 		function onLoad(){
 			ihc.app.initialize();
 		}
-
-// IHC app pega na inicialização atualização de dados e insere no banco. 
-// pegar via JSON e passar pro banco
-	//pedir dados do banco (como?)
-
-	/*function httpGet(theUrl)
-	{
-		var xmlHttp = null;
-		var theUrl = "http://10.0.0.4:8000/ihcapp/getData/index.lua";
-		xmlHttp = new XMLHttpRequest();
-		xmlHttp.open( "GET", theUrl, false );
-		try{
-			xmlHttp.send();
-		}catch (err){
-			console.log(err.message);
-		}
-		console.log(xmlHttp.responseText);
-		return xmlHttp.responseText;
-	}*/
-
-	/* var response = httpGet();*/
-
-/*	var obj = JSON.parse(response);*/
-/*	console.log(obj.name);*/
-	/*navigator.vibrate(240);*/
-
-	/*$.ajax({
-	  type: "GET",
-	  dataType: "json",
-	  url: "http://10.0.0.4:8000/ihcapp/getData/index.lua",
-	  success: onSuccess,
-	  error: deuError
-	});*/
-
-
-/*	jQuery.getJSON("http://192.168.0.102:8000/ihcapp/getData/index.lua?callback=?",onSuccess);*/
-	function onSuccess (data,textStatus){
-		
-		try{
-			obj = JSON.parse(JSON.stringify(data));
-		}catch(err){
-			console.log("error on json parsing: "+err.message);
-		}
-
-		/*navigator.vibrate(240);*/
-		
-		console.log(obj.name);
-		navigator.notification.alert(
-			obj.name,
-			function() {//por exemplo jogar no banco de dados o resultado ;)
-			}, //do something 
-	        'Funcionou JSON',          // title
-	        'Beleza'       // buttonName
-	        );
-	}
-
-	function deuError (jqXHR, textStatus, errorThrown) {
-		console.log("deu ruim o ajax: "+textStatus+" "+errorThrown);
-	}
-
-
-		function showAlert() {
-			var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ console.log("deu BOM no banco");},function(tx,res){ console.log("deu RUIM no banco");});
-			
-			/*db.transaction(function (tx){
-				tx.executeSql('CREATE TABLE IF NOT EXISTS foo (id INT, txt VARCHAR(50))',function(tx,res){ console.log("deu BOM no insert");},function(err){ console.log("deu RUIM no insert: "+err.message);});
-			});*/
-			db.transaction(function (tx){
-				/*tx.executeSql("SELECT name FROM sqlite_master WHERE type = 'table'",[],*/
-				tx.executeSql('SELECT * FROM event', [], 
-        			function (tx, results) {
- 	          			len = results.rows.length;
- 	          			navigator.vibrate(250);		
- 	          			navigator.notification.alert(
-			                len,           // message
-			                function() {}, //do something 
-			                'N resultados',          // title
-			                'Beleza'       // buttonName
-			                );
-
-              		/*	for (i = 0; i < len; i++) {
-			              var res =results.rows.item(i).text;
-			                
-			                navigator.notification.alert(
-			                res,           // message
-			                function() {}, //do something 
-			                'DB',          // title
-			                'Certo'       // buttonName
-			                );
-			              }*/
-         			},
-         			function (tx,err){console.log("ERRORIHC: "+err.message);}
-         			);
-			
-			},function (tx,err){console.log("ERRORIHC2: "+e.message)});
-
-		}
-
 	</script>
 
 <body onload="onLoad()">
@@ -163,16 +64,142 @@ SOFTWARE.
 		<p>Sala 3:<div id="agora3"></div></p>
 		<p>Sala 4:<div id="agora4"></div></p>
 		<p><a id="teste" href="#" onclick="showAlert(); return false;">Atualizar dados (melhorar nome/botao)</a></p>
-		<a href="favorites.html" class="ui-btn">Meus Favoritos</a>
+		<a href="favorites.html" class="ui-btn">Favorites</a>
 		<p>
-		<a href="program.html" class="ui-btn">Programação</a>
-		<a href="keynotes.html" class="ui-btn">Keynote Speakers</a>
-		<a href="comitee.html" class="ui-btn">Comitês</a>
-		<a href="about.html" class="ui-btn">Sobre</a>
-		<a href="comites.html" class="ui-btn">(?)Sessões Técnicas </a>
-		<a href="#next" class="ui-btn">(?)Eventos</a>
+		<a href="#program" class="ui-btn" onclick="navigator.notification.alert('oi',function(){},'ok','ok');">Program</a>
+		<a href="#keynotes" class="ui-btn">Keynote Speakers</a>
+		<a href="#comitee" class="ui-btn">Commitee</a>
+		<a href="#about" class="ui-btn">About</a>
+		<a href="#social_events" class="ui-btn">Social Events</a>
 	</div>
 </div>
+
+<!-- PROGRAM Page -->
+<div data-role="page" id="program_day">
+	<div data-role="header" data-position="fixed">
+		<h1>Programacao</h1>
+		<a href="index.html" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Voltar</a>
+		<a href="#settings" data-icon="gear" data-transition="slideup" class="ui-btn-right">Configurar</a>
+	</div>
+	<style>
+		#divider_dia {background-color:rgb(180,200,180);}
+	</style>
+	<div role="main" class="ui-content">
+	    <h2>Programação - Sala 1 </h2>
+		
+	    <ul data-role="listview" data-inset="true" data-filter="true"	>
+	    	
+	    	<!-- 27/OUTUBRO -->
+	    	<li id="divider_dia" data-role="list-divider">Segunda,27 de Outubro,2014 <span class="ui-li-count">2</span>
+	    	
+	    	<li data-role="list-divider">09:00-10:00</li>
+	    	<li><a href="#details-weber" data-transition="pop" >
+	    		<h2>Sessão Técnica 1</h2>
+	    		<p>Aspectos Culturais em IHC e Semiótica</p>
+	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
+	    	</a></li>
+
+	    	<li data-role="list-divider">10:30-11:45</li>
+	    	<li dsata-icon="false" style="background-color:rgb(197,149,233);">
+	    		<h2>Coffe-Break</h2>
+	    		<p><strong>Salão 2</strong></p>
+	    		
+	    		<p class=""><strong>12:00-14:00</strong></p>
+	    	</a></li>
+			<!-- FIM 27/OUTUBRO -->	    	
+
+			<!-- 28/OUTUBRO -->
+	    	<li id="divider_dia" data-role="list-divider">Terça,28 de Outubro,2014 <span class="ui-li-count">2</span>
+	    	
+	    	<li data-role="list-divider">09:00-10:00</li>
+	    	<li><a href="#details-weber" data-transition="pop" >
+	    		<h2>Sessão Técnica 1</h2>
+	    		<p>Aspectos Culturais em IHC e Semiótica</p>
+	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
+	    	</a></li>
+
+	    	<li data-role="list-divider">10:30-11:45</li>
+	    	<li data-icon="false" style="background-color:rgb(197,149,233);">
+	    		<h2>Coffe-Break</h2>
+	    		<p><strong>Salão 2</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>12:00-14:00</strong></p>
+	    	</a></li>
+			<!-- FIM 28/OUTUBRO -->	    	
+
+			<!-- 29/OUTUBRO -->
+	    	<li id="divider_dia" data-role="list-divider">Quarta,29 de Outubro,2014 <span class="ui-li-count">2</span>
+	    	
+	    	<li data-role="list-divider">09:00-10:00</li>
+	    	<li><a href="#details-weber" data-transition="pop" >
+	    		<h2>Sessão Técnica 1</h2>
+	    		<p>Aspectos Culturais em IHC e Semiótica</p>
+	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
+	    	</a></li>
+
+	    	<li data-role="list-divider">10:30-11:45</li>
+	    	<li data-icon="false" style="background-color:rgb(197,149,233);">
+	    		<h2>Coffe-Break</h2>
+	    		<p><strong>Salão 2</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>12:00-14:00</strong></p>
+	    	</a></li>
+			<!-- FIM 29/OUTUBRO -->	    	
+
+			<!-- 30/OUTUBRO -->
+	    	<li id="divider_dia" data-role="list-divider">Quinta,30 de Outubro,2014 <span class="ui-li-count">2</span>
+	    	
+	    	<li data-role="list-divider">09:00-10:00</li>
+	    	<li><a href="#details-weber" data-transition="pop" >
+	    		<h2>Sessão Técnica 1</h2>
+	    		<p>Aspectos Culturais em IHC e Semiótica</p>
+	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
+	    	</a></li>
+
+	    	<li data-role="list-divider">10:30-11:45</li>
+	    	<li data-icon="false" style="background-color:rgb(197,149,233);">
+	    		<h2>Coffe-Break</h2>
+	    		<p><strong>Salão 2</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>12:00-14:00</strong></p>
+	    	</a></li>
+			<!-- FIM 30/OUTUBRO -->	    	
+
+			<!-- 31/OUTUBRO -->
+	    	<li id="divider_dia" data-role="list-divider">Sexta,31 de Outubro,2014 <span class="ui-li-count">2</span>
+	    	
+	    	<li data-role="list-divider">09:00-10:00</li>
+	    	<li><a href="#details-weber" data-transition="pop" >
+	    		<h2>Sessão Técnica 1</h2>
+	    		<p>Aspectos Culturais em IHC e Semiótica</p>
+	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
+	    	</a></li>
+
+	    	<li data-role="list-divider">10:30-11:45</li>
+	    	<li data-icon="false" style="background-color:rgb(197,149,233);">
+	    		<h2>Coffe-Break</h2>
+	    		<p><strong>Salão 2</strong></p>
+	    		
+	    		<p class="ui-li-aside"><strong>12:00-14:00</strong></p>
+	    	</a></li>
+			<!-- FIM 31/OUTUBRO -->	    	
+	    	
+	    </ul>
+
+	</div>
+</div>
+
+
 
 <div data-role="page" id="next">
 	<div data-role="header" data-position="fixed">

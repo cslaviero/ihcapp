@@ -7,16 +7,11 @@ ihc.app = {
 		document.addEventListener('deviceready', this.onDeviceReady, false);
     },
     
+
+    // where the magic happens at the beggining of the app
     onDeviceReady: function() {
     	FastClick.attach(document.body);
 
-    	navigator.notification.alert(
-		        'Cordova is ready!',       // message
-		        function() {},//do something,  // callback
-		        'Congratulations',            // title
-		        'Done'                      // buttonName
-		        );
-         /*var db = window.sqlitePlugin.openDatabase({name: "ihc.db"});*/
         function dbcopy()
         {
             window.plugins.sqlDB.copy("ihc.db",copysuccess,copyerror);
@@ -24,7 +19,7 @@ ihc.app = {
 
         function copysuccess()
         {
-        console.log("SUCESSO NA COPIA DO DB (sera?)");
+        console.log("Database successfully copied.");
         }
 
         function copyerror (e)
@@ -32,41 +27,107 @@ ihc.app = {
             //db already exists or problem in copying the db file. Check the Log.
             console.log("Error = "+JSON.stringify(e));
         }
-        // copia o banco mano!
+
+        // copies database
         dbcopy();
 
-        // db.transaction
-        // db.openDatabase
-        // db.executeSql
-/*        var db = window.sqlitePlugin.openDatabase({name: "ihc.db"});
-        console.log ("IHC: banco aberto")
 
-        db.transaction(function (tx){
-                    tx.executeSql('DROP TABLE IF EXISTS test_table');
-                    tx.executeSql('CREATE TABLE IF NOT EXISTS test_table (id integer primary key auto_increment, data text, data_num integer)');
-
-                    tx.executeSql("INSERT INTO test_table (data, data_num) VALUES (?,?)", ["test", 100], 
-                        function(tx, res) {
-                            console.log("insertId: " + res.insertId + " -- probably 1");
-                            console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
-                        });
-
-
-        },function (e){console.log("ERRORIHCindex.js: "+e.message)});*/
+        /*      navigator.notification.alert(
+                'Cordova is ready!',       // message
+                function() {},//do something,  // callback
+                'Congratulations',            // title
+                'Done'                      // buttonName
+                );*/
 
     },
 
 };
 
-/*function success(tx,res){
-   console.log("Row/table inserted/created correctly");
-   navigator.vibrate(250);
-}
+// IHC app pega na inicialização atualização de dados e insere no banco. 
+// pegar via JSON e passar pro banco
+    //pedir dados do banco (como?)
 
-function error(err)
-{
-    console.log("ERROR IHC: "+err.message);
-    navigator.vibrate(1000);
-}
+    /*function httpGet(theUrl)
+    {
+        var xmlHttp = null;
+        var theUrl = "http://10.0.0.4:8000/ihcapp/getData/index.lua";
+        xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false );
+        try{
+            xmlHttp.send();
+        }catch (err){
+            console.log(err.message);
+        }
+        console.log(xmlHttp.responseText);
+        return xmlHttp.responseText;
+    }*/
 
-*/
+    /* var response = httpGet();*/
+
+/*  var obj = JSON.parse(response);*/
+/*  console.log(obj.name);*/
+    /*navigator.vibrate(240);*/
+
+    /*$.ajax({
+      type: "GET",
+      dataType: "json",
+      url: "http://10.0.0.4:8000/ihcapp/getData/index.lua",
+      success: onSuccess,
+      error: deuError
+    });*/
+
+
+/*  jQuery.getJSON("http://192.168.0.102:8000/ihcapp/getData/index.lua?callback=?",onSuccess);*/
+    function onSuccess (data,textStatus){
+        
+        try{
+            obj = JSON.parse(JSON.stringify(data));
+        }catch(err){
+            console.log("error on json parsing: "+err.message);
+        }
+
+        /*navigator.vibrate(240);*/
+        
+        console.log(obj.name);
+        navigator.notification.alert(
+            obj.name,
+            function() {//por exemplo jogar no banco de dados o resultado ;)
+            }, //do something 
+            'Funcionou JSON',          // title
+            'Beleza'       // buttonName
+            );
+    }
+
+    function deuError (jqXHR, textStatus, errorThrown) {
+        console.log("deu ruim o ajax: "+textStatus+" "+errorThrown);
+    }
+
+function showAlert() {
+    var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ console.log("deu BOM no banco");},function(tx,res){ console.log("deu RUIM no banco");});
+
+        /*db.transaction(function (tx){
+            tx.executeSql('CREATE TABLE IF NOT EXISTS foo (id INT, txt VARCHAR(50))',function(tx,res){ console.log("deu BOM no insert");},function(err){ console.log("deu RUIM no insert: "+err.message);});
+        });*/
+    db.transaction(function (tx){
+    /*tx.executeSql("SELECT name FROM sqlite_master WHERE type = 'table'",[],*/
+        tx.executeSql('SELECT * FROM event', [], 
+            function (tx, results) {
+                len = results.rows.length;
+                navigator.vibrate(250);     
+                navigator.notification.alert(
+                            len,           // message
+                            function() {}, //do something 
+                            'N resultados',          // title
+                            'Beleza'       // buttonName
+                            );
+
+                    /*  for (i = 0; i < len; i++) {
+                          var res =results.rows.item(i).text;
+                      }*/
+},
+function (tx,err){console.log("ERRORIHC: "+err.message);}
+);
+
+    },function (tx,err){console.log("ERRORIHC2: "+e.message)});
+
+}
