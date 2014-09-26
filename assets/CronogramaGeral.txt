@@ -1,16 +1,17 @@
 
 /* Programas */
-Minucursos
-Workshops
-Palestras
-Pôsteres
-Demonstrações
-Sessões técnicas (1 até 15)
-GranDIHC-BR - Grandes Desafios de IHC no Brasil
+(id,type,name,date,startTime,endTime)
+Sessão Técnica (1 até 15)
+Demonstração
+Pôster
+Best Paper
+Workshop de Teses e Dissertação em IHC
+GranDIHC-BR - Grandes Desafios de IHC no Brasil (1 a 5?)
 IHC na Prática
-Competição de Avaliação (?) // sim, mas como não temos ainda as pares. fica “vazio” (explico ali embaixo)
+Competição de Avaliação
 
 /* Eventos */
+(id_event,title,description, date,startTime,endTime)
 Minicurso 1 - Criando um restaurante interativo: curso prático de prototipagem da experiência
 Minicurso 2 - Acessibilidade e Inclusão Digital
 Minicurso 3 - Aplicando Análise Estatística de Dados de Interação de Larga Escala no Design Centrado no Usuário
@@ -22,10 +23,11 @@ WTDIHC - I Workshop de Teses e Dissertações em IHC
 Palestra de abertura
 Palestra de encerramento
 Reunião da comunidade de IHC
-Papers (todos)
-Competição de avaliação (se tivermos os nomes das apresentações tiramos isso e colocamos as apresentações)
+Jantar
+Coquetel de abertura
+I IHC Walk & Run
 
-/* O que vai ser isso? */
-Jantar //Programa + Evento pra não ter dor de cabeça OOOU Programa “Social” e evento Jantar da Comunidade 
-Coquetel de abertura // Programa +Evento OOOU “Programa Social” e Evento “Coquetel”
-IHC Walk & Run // Same as before
+/*Presentation*/
+(id_presentation, title, abstract, date, startTime,endTime,id_program,type)
+All papers and paper-like presentations 
+
