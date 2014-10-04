@@ -64,28 +64,32 @@ SOFTWARE.
 		}
 
 		function compare(startTime,endTime,timeSchedule){
-			console.log("compare");
+			
 			// verifica se o horário está dentro do timeSchedule
 			// pra isso preciso dar split neles e fazer a comparação
 			var splitStartTime = startTime.split(":");
 			var splitEndTime = endTime.split(":");
-			var splitTimeSchedule = timeSchedule;
-
+			var splitTimeSchedule = timeSchedule.split(":");
+			var ret = false;
 			// agora preciso comparar 
 			
 			// regras
 			// se startTime >= timeSchedule, retorna true
 			// se endTime é estritamente maior que timeSchedule, retorna true
-			if (splitStartTime[0] >= splitTimeSchedule){
-				return true;
+			if (splitStartTime[0] >= splitTimeSchedule[0]){
+				console.log(splitStartTime[0]+">="+splitTimeSchedule);
+				ret = true;
 			}else{
-				if (splitEndtTime[0] > splitTimeSchedule){
-					return true;
+				if (splitEndTime[0] > splitTimeSchedule[0]){
+					console.log(splitEndTime[0]+">"+splitTimeSchedule[0]);
+					ret = true;
 				}else{
 					// não deu.
-					return false;
+					console.log(splitEndTime[0]+"<="+splitTimeSchedule[0]);
+					ret= false;
 				}
 			}
+			return ret;
 		}
 
 
@@ -101,10 +105,15 @@ SOFTWARE.
 			var h = "#h_"+hour;
 			for (var ind=0; ind<list.length; ind++){
 				var data = list[ind];
-				/*console.log('event: '+ind);*/
-
-			/*	if (compare(data.startTime,data.endTime,hour)){*/
-					//console.log("entrouEventCompare");
+				console.log('event: '+ind);
+				var boo = false;
+				try{
+					boo = compare(data.startTime,data.endTime,hour);
+				}catch (err){
+					console.log(err.message);
+				}
+				if (boo){
+					console.log("entrouEventCompare");
 					// cria a entrada
 					res = res+startLiLine;
 					res = res+startA.format(data.id_event,"'event'");
@@ -116,26 +125,14 @@ SOFTWARE.
 	    					//hora do evento
 	    					// (ToDo: e se for evento que começou mais cedo?)
 	    					'<p class="ui-li-aside"><strong>'+data.startTime+"-"+data.endTime+'</strong></p>'; 
-					res = res+"</a>"+endLi;
-
-			/*res = res + '<li class="line">'+
-				    		'<a href="#program_detail" onclick="fill_program_detail();" data-transition="pop" >'+
-					    		'<h2>Sessao Técnica 1</h2>'+
-					    		'<p>Aspectos Culturais em IHC e Semiótica</p>'+
-					    		'<p><strong>Sala 1 - Auditorio Apagão</strong></p>'+
-					    		'<p class="ui-li-aside"><strong>10:00-12:00</strong></p>'+
-		    				'</a>'+
-		    			'</li>';*/
-
-				/*}*/
-				
+					res = res+"</a>"+endLi;	
+				}			
 			}
 
 			/*console.log("res: "+res);*/
-			console.log(hour);
-			$("#h_"+hour.split(":")[0]).before(res);
 			
-
+			$("#h_"+hour.split(":")[0]).before(res);
+			$("ul").listview().listview('refresh');
 		}
 
 		function addProgram(hour,list){
@@ -170,7 +167,7 @@ SOFTWARE.
 			// insertBefore
 
 			$("#h_"+hour).before(res);
-			$("ul").listview('refresh');
+			$("ul").listview().listview('refresh');
 		}
 
 		function addScheduleByDay(hour,day,typeSchedule){
@@ -225,7 +222,7 @@ SOFTWARE.
 			    }else{
 			    	addProgram(hour,listProgram);
 			    }
-			   // $("ul").listview('refresh');
+			    /*$("ul").listview().listview('refresh');*/
 			}
 
 			var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ /*console.log("deu BOM no banco");*/},function(tx,res){ console.log("deu RUIM no banco");});
@@ -350,10 +347,10 @@ SOFTWARE.
 			}
 			// POR QUE NAO FUNCIONA???
 			/*$('.line').listview().listview('refresh');*/
-			try{
+			/*try{*/
 				/*$("#testUl").trigger('create');*/
 				/*$("#testUl").listview().listview('refresh');*/
-				$('#program_day_detail').trigger('pagecreate');
+				/*$('#program_day_detail').trigger('pagecreate');
 			}catch (err){
 				console.log('err1: '+err.message);
 			}
@@ -361,7 +358,7 @@ SOFTWARE.
 				$('ul').enhanceWithin();
 			}catch (err){
 				console.log('err2: '+err.message);
-			}
+			}*/
 			/*$("ul").trigger('create');
 			$(".line").trigger('create');*/
 		}
@@ -500,7 +497,7 @@ SOFTWARE.
 	</div>
 	
 	<div role="main" class="ui-content">
-		<button onclick="$('#testUl').enhanceWithin();">Refresh</button>
+		
 	    <h2 id="program_day_detail_title"> </h2>
 	    <!-- AQUI dentro vai ser colocado as informações vindas do banco -->
 	    <div id="div_program_day_detail"> 
