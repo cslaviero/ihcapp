@@ -5,6 +5,15 @@ ihc.app = {
 	
     initialize: function() {
 		document.addEventListener('deviceready', this.onDeviceReady, false);
+    
+        function loadEv(event,ui){
+            $('ul').listview().listview('refresh');
+        }
+        
+        $( "#program_day_detail" ).pagecontainer({
+            load: loadEv
+        });
+        $( "#program_day_detail" ).on("pagecontainerload",loadEv );
     },
     
 
@@ -19,17 +28,35 @@ ihc.app = {
 
         function copysuccess()
         {
-        console.log("Database successfully copied.");
+            console.log("Database successfully copied.");
+            var storage = window.localStorage;
+            storage.setItem("isCopied","true");
+            //lastUpdated pra eu saber depois no copy qual foi a ultima atualização (pra pegar dados novos se)
+
         }
 
         function copyerror (e)
         {
             //db already exists or problem in copying the db file. Check the Log.
-            console.log("Error = "+JSON.stringify(e));
+            // if exists..
+            // (am I installing a new version?)
+            // (am I just reopening the app?)
+
+            console.log("Error = "+JSON.stringify(e.message));
         }
 
         // copies database
-        dbcopy();
+       var storage = window.localStorage;
+            var isCopied = storage.getItem("isCopied");
+        if (!isCopied){
+            dbcopy();
+        }else{
+            // preciso achar um jeito de atualizar simplesmente o banco. 
+            // atualiza lastUpdated SE lastUpdated for menor;)
+            
+        }
+
+
 
 
         /*      navigator.notification.alert(
@@ -124,10 +151,10 @@ function showAlert() {
                     /*  for (i = 0; i < len; i++) {
                           var res =results.rows.item(i).text;
                       }*/
-},
-function (tx,err){console.log("ERRORIHC: "+err.message);}
-);
+    },
+    function (tx,err){console.log("ERRORIHC: "+err.message);}
+    );
 
-    },function (tx,err){console.log("ERRORIHC2: "+e.message)});
+        },function (tx,err){console.log("ERRORIHC2: "+e.message)});
 
-}
+    }

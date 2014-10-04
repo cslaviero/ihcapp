@@ -1,0 +1,46 @@
+{
+"RECORDS":[
+{
+"type":"table",
+"name":"sqlite_sequence",
+"tbl_name":"sqlite_sequence",
+"rootpage":"3",
+"sql":"CREATE TABLE sqlite_sequence(name,seq)"
+},
+{
+"type":"table",
+"name":"author",
+"tbl_name":"author",
+"rootpage":"6",
+"sql":"CREATE TABLE \"author\" (\n\t`id_author`\tINTEGER NOT NULL,\n\t`name`\tTEXT NOT NULL,\n\t`afiliation`\tTEXT,\n\tPRIMARY KEY(id_author)\n)"
+},
+{
+"type":"table",
+"name":"program",
+"tbl_name":"program",
+"rootpage":"2",
+"sql":"CREATE TABLE \"program\" (\n\t`id_program`\tinteger NOT NULL,\n\t`name`\tTEXT NOT NULL,\n\t`startTime`\tINTEGER,\n\t`endTime`\tINTEGER,\n\t`location`\tINTEGER,\n\t`date`\tTEXT,\n\tPRIMARY KEY(id_program)\n)"
+},
+{
+"type":"table",
+"name":"presentation_author",
+"tbl_name":"presentation_author",
+"rootpage":"5",
+"sql":"CREATE TABLE \"presentation_author\" (\n\t`id_presentation`\tINTEGER NOT NULL,\n\t`id_author`\tINTEGER NOT NULL\n)"
+},
+{
+"type":"table",
+"name":"event",
+"tbl_name":"event",
+"rootpage":"8",
+"sql":"CREATE TABLE `event` (\n\t`id_event`\tINTEGER,\n\t`title`\tINTEGER,\n\t`description`\tTEXT,\n\t`date`\tINTEGER,\n\t`startTime`\tINTEGER,\n\t`endTime`\tINTEGER,\n\tPRIMARY KEY(id_event)\n)"
+},
+{
+"type":"table",
+"name":"presentation",
+"tbl_name":"presentation",
+"rootpage":"10",
+"sql":"CREATE TABLE \"presentation\" (\n\t`id_presentation`\tINTEGER NOT NULL,\n\t`title`\tTEXT NOT NULL,\n\t`abstract`\tTEXT,\n\t`startTime`\tTEXT NOT NULL,\n\t`endTime`\tTEXT NOT NULL,\n\t`id_program`\tINTEGER NOT NULL,\n\t`type`\tTEXT,\n\tPRIMARY KEY(id_presentation)\n)"
+}
+]
+}

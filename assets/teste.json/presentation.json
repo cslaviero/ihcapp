@@ -1,0 +1,31 @@
+{
+"RECORDS":[
+{
+"id_presentation":"1",
+"title":"Teacher's Presence Mediated by Virtual Learning Environment Interfaces: Evidences of the Self",
+"abstract":"",
+"startTime":"11:00",
+"endTime":"11:30",
+"id_program":"1",
+"type":"FP"
+},
+{
+"id_presentation":"2",
+"title":"Multimodal Gaming for Navigation Skills in Players Who Are Blind",
+"abstract":"",
+"startTime":"11:30",
+"endTime":"12:00",
+"id_program":"1",
+"type":"FP"
+},
+{
+"id_presentation":"5",
+"title":"Investigating the case-based reasoning process during HCI design",
+"abstract":"",
+"startTime":"11:00",
+"endTime":"11:30",
+"id_program":"1",
+"type":"FP"
+}
+]
+}

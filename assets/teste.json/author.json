@@ -1,0 +1,39 @@
+{
+"RECORDS":[
+{
+"id_author":"1",
+"name":"Luciana Espindola",
+"afiliation":""
+},
+{
+"id_author":"2",
+"name":"Milene Silveira",
+"afiliation":""
+},
+{
+"id_author":"3",
+"name":"Jaime Sanchez",
+"afiliation":""
+},
+{
+"id_author":"4",
+"name":"Marcia de Borba Campos",
+"afiliation":""
+},
+{
+"id_author":"5",
+"name":"Matías Espinoza",
+"afiliation":""
+},
+{
+"id_author":"6",
+"name":"José Antonio Gonçalves Motta",
+"afiliation":""
+},
+{
+"id_author":"7",
+"name":"Simone Diniz Junqueira Barbosa",
+"afiliation":"PUC-Rio"
+}
+]
+}

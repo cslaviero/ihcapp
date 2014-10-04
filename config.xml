@@ -31,7 +31,12 @@ https://github.com/app-o-mat/jqm-cordova-template-project/LICENSE.md
     <platform name="android">
         <icon src="www/icon.png"/>
         <!-- <preference name="Fullscreen" value="true" /> -->
+
+        <plugin name="File" value="org.apache.cordova.FileUtils" />
+        <plugin name="FileTransfer" value="org.apache.cordova.FileTransfer" />
     </platform>
+
+    
 
 	<!-- uses cordova plugin add org.apache.cordova.statusbar to make iOS7 statusbar look right-->
 	<!-- <preference name="StatusBarOverlaysWebView" value="false" /> -->

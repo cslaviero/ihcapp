@@ -49,8 +49,133 @@ SOFTWARE.
 	<!-- <script type="text/javascript" src="js/program_detail.js"></script> -->
 	<!-- <script type="text/javascript" src="js/program_day_detail.js"></script> -->
 <script type="text/javascript">
-		function getScheduleByDay(day,typeSchedule){
-		/*	var res= {};
+
+				// First, checks if it isn't implemented yet.
+		
+		if (!String.prototype.format) {
+		// does it  receive arguments?
+		  String.prototype.format = function() {
+		    var args = arguments;
+		    return this.replace(/{(\d+)}/g, 
+		    	function(match, number) { 
+		      		return typeof args[number] != 'undefined' ? args[number]: match;
+		    	});
+		  };
+		}
+
+		function compare(startTime,endTime,timeSchedule){
+			console.log("compare");
+			// verifica se o horário está dentro do timeSchedule
+			// pra isso preciso dar split neles e fazer a comparação
+			var splitStartTime = startTime.split(":");
+			var splitEndTime = endTime.split(":");
+			var splitTimeSchedule = timeSchedule;
+
+			// agora preciso comparar 
+			
+			// regras
+			// se startTime >= timeSchedule, retorna true
+			// se endTime é estritamente maior que timeSchedule, retorna true
+			if (splitStartTime[0] >= splitTimeSchedule){
+				return true;
+			}else{
+				if (splitEndtTime[0] > splitTimeSchedule){
+					return true;
+				}else{
+					// não deu.
+					return false;
+				}
+			}
+		}
+
+
+		function addEvent(hour,list){
+			var endLi = '</li>';
+			var startLiLine = '<li class="line">';
+			var startA = '<a href="#program_detail" onclick="fill_program_detail('+"'{0}"+"',"+'{1});" data-transition="pop" >';
+
+			//console.log("addEvent");
+			
+			var res = "";
+			// insertBefore
+			var h = "#h_"+hour;
+			for (var ind=0; ind<list.length; ind++){
+				var data = list[ind];
+				/*console.log('event: '+ind);*/
+
+			/*	if (compare(data.startTime,data.endTime,hour)){*/
+					//console.log("entrouEventCompare");
+					// cria a entrada
+					res = res+startLiLine;
+					res = res+startA.format(data.id_event,"'event'");
+							// nome do evento
+					res=res+'<p>'+data.title+'</p>'+ 
+							'<p>'+data.description+'</p>'+ 
+							// local
+	    					'<p><strong>'+data.location+'</strong></p>'+ 
+	    					//hora do evento
+	    					// (ToDo: e se for evento que começou mais cedo?)
+	    					'<p class="ui-li-aside"><strong>'+data.startTime+"-"+data.endTime+'</strong></p>'; 
+					res = res+"</a>"+endLi;
+
+			/*res = res + '<li class="line">'+
+				    		'<a href="#program_detail" onclick="fill_program_detail();" data-transition="pop" >'+
+					    		'<h2>Sessao Técnica 1</h2>'+
+					    		'<p>Aspectos Culturais em IHC e Semiótica</p>'+
+					    		'<p><strong>Sala 1 - Auditorio Apagão</strong></p>'+
+					    		'<p class="ui-li-aside"><strong>10:00-12:00</strong></p>'+
+		    				'</a>'+
+		    			'</li>';*/
+
+				/*}*/
+				
+			}
+
+			/*console.log("res: "+res);*/
+			console.log(hour);
+			$("#h_"+hour.split(":")[0]).before(res);
+			
+
+		}
+
+		function addProgram(hour,list){
+			//console.log("addProgram");
+			var endLi = '</li>';
+			var startLiLine = '<li class="line">';
+			var startA = '<a href="#program_detail" onclick="fill_program_detail('+"'{0}"+"',"+'{1});" data-transition="pop" >';
+
+			// dou um replace na hora 
+			//(mas qual é a hora que eu estou querendo dar replace?)
+
+/*		for (var i=0; i<list.length; i++){
+				console.log('program '+i);
+				var data = list[i];
+				if (compare(data.startTime,data.endTime,hour)){
+						//console.log('compareOKProgram');
+						// cria a entrada	
+						res = res+startLiLine;
+						res = res+startA.format(data.id_program,'program');
+						// tipo de programa
+						res=res+'<h2>'+data.type+'</h2>'+
+						// nome do programa
+						'<p>'+data.name+'</p>'+
+						// local do programa
+		    			'<p><strong>'+data.location+'</strong></p>'+ 
+		    			//hora do programa
+		    			'<p class="ui-li-aside"><strong>'+data.startTime+"-"+data.endTime+'</strong></p>';
+						//fecha a
+						res = res+"</a>"+endLi;
+				}
+			}*/
+			// insertBefore
+
+			$("#h_"+hour).before(res);
+			$("ul").listview('refresh');
+		}
+
+		function addScheduleByDay(hour,day,typeSchedule){
+
+			var hora = hour;
 
 			// funcão que retorna uma key value com os dados do banco
 			var selectEvent = "SELECT * FROM event where date=?";
@@ -66,44 +191,62 @@ SOFTWARE.
 				}
 			}
 
-			var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ console.log("deu BOM no banco");},function(tx,res){ console.log("deu RUIM no banco");});
+			function success(tx,results){
+				
+				var listEvent= new Array();
+				var listProgram = new Array();
+				var isEvent = true;
 
+				// results is a http://dev.w3.org/html5/webdatabase/#sqlresultset
+				var res = new Array();
+				
+				// percorra a lista de resultados...
+				for (var i=0; i < results.rows.length; i++){
+			       var item = results.rows.item(i);
+			       // adicione em uma lista que vamos inserir lá no div.
+			       if (item.id_event){
+
+
+			       	listEvent.push(item);	
+			       	isEvent=true;
+			       }else{
+			       	if(item.id_program){
+			       		listProgram.push(item);
+			       		isEvent=false;
+			       	}
+			       }
+			    }
+			    //bela gambiarra, irei arrumar depois se tudo funcionar.
+			    // tenho que criar uma função pra cada candango.
+			    /*console.log(listEvent);*/
+			    /*console.log(listProgram);*/
+			    if (isEvent){
+			    	addEvent(hour,listEvent);	
+			    }else{
+			    	addProgram(hour,listProgram);
+			    }
+			   // $("ul").listview('refresh');
+			}
+
+			var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ /*console.log("deu BOM no banco");*/},function(tx,res){ console.log("deu RUIM no banco");});
+			
 			db.transaction(function (tx){
-					tx.executeSql(usedSelect, [day], 
-						function (tx, results) {
-							// results is a http://dev.w3.org/html5/webdatabase/#sqlresultset
-							for (var i=0; i < results.rows.length; i++){
-						       res.push(results.rows.item(i));
-						    }
-						},
-			            function (tx,err){console.log("ERRORIHC: "+err.message);}
-			            );},
-						function (tx,err){console.log("ERRORIHC2: "+e.message)});
-
-
-			return res;*/
-
+				tx.executeSql(usedSelect, [day], success,
+			            function (tx,err){
+			            	console.log("ERRORIHC: "+err.message);
+			            });
+			});
+			
 		}
-
-
 
 		function fill_program_detail(id,type){
+
 			// type pode ser program ou event. 
 			//preencher dados em "program_detail" de acordo.
-		}
-
-
-				// First, checks if it isn't implemented yet.
-		// 
-		if (!String.prototype.format) {
-		// does it  receive arguments?
-		  String.prototype.format = function() {
-		    var args = arguments;
-		    return this.replace(/{(\d+)}/g, 
-		    	function(match, number) { 
-		      		return typeof args[number] != 'undefined' ? args[number]: match;
-		    	});
-		  };
+			// vou ter que fazer um select nested com outro, será que funciona?
+			// se não funcionar, vou fazer um "prototipo" de página pra só preencher
+			// e aí não tem problema, sincronismo não vai prejudicar.
+			// vou ter que fazer isso mesmo!
 		}
 
 		function onLoad(){
@@ -125,11 +268,13 @@ SOFTWARE.
 		}
 
 		function fill_program_day_detail(day)
-		{
+		{	
+			// remove on final version
 			var day = '10/27/2014';
+
 			//program_day_detail_title
 			//div_program_day_detail
-			var startUl='<ul data-role="listview" data-inset="true" data-filter="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
+			var startUl='<ul id="testUl" data-role="listview" data-inset="true" data-filter="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
 			var endUl= '</ul>';
 			// ao final deste é preciso inserir horário
 			var startLiHorario = '<li id="divider_dia" data-role="list-divider" role="heading" class="ui-li-divider ui-bar-inherit ui-first-child">';
@@ -137,13 +282,10 @@ SOFTWARE.
 			var startLiLine = '<li class="line">';
 			var startA = '<a href="#program_detail" onclick="fill_program_detail('+"'{0}"+"',"+'{1});" data-transition="pop" >';
 
-			/*Faixas de horário dos dias (posso colocar numa table)
-			27/10 = 08:30-10:00 ; (CB) ; 10:30-12:00; (ALM); 14:00-15:30; (CB) ; 16:00-17:30
-			28/10 = 
-			*/
 
+			//need to fill this in. (in the future from the database)
 			var listDay = {"10/27/2014":{"08:30":"08:30-10:00",
-										 "CB1":"10:00-11:00",
+										 "CB1":"10:00-10:30",
 										 "10:30":"10:30-12:00",
 										 "ALM":"12:00-14:00",
 										 "14:00":"14:00-15:30",
@@ -153,14 +295,7 @@ SOFTWARE.
 							"10/28/2014":{"08:00":"08:30-10:00"},
 							};
 
-			// a ideia é que cada dia tem as faixas de horário distintas. 
-			// cada evento possui um "startTime" , que podemos usar pra "calcular" se ele faz parte da faixa de horário ou não (no caso de eventos isso é fundamental pois estes eventos duram o dia todo)
-			// entao basicamente teremos assim: 
-			// select * from program E select * from event where date=day
-			// como vou percorrer várias vezes essas duas listas preciso colocar num array o resultado.
-			// um for pra faixa de horário 
-			var listProgram = getScheduleByDay(day,'program');
-			var listEvent = getScheduleByDay(day,'event');
+			
 
 			var listSchedule = listDay[day];
 
@@ -175,55 +310,27 @@ SOFTWARE.
 				
 				// se key == "CB"
 				if (key=="CB1" || key=="CB2") {
-					res = res+'<li id="divider_cb" data-role="list-divider"><strong>'+value+'</strong><center><strong>Coffe Break</strong></center></li>';
+					/*res = res+'<li id="divider_cb" data-role="list-divider"><strong>'+value+'</strong><center><strong>Coffe Break</strong></center></li>';*/
+					res = res+'<li id="divider_cb" data-role="list-divider" role="heading" class="ui-li-divider ui-bar-inherit">'+value+' - Coffe Break';
 				}
 				else
 				{
 					// se key == "ALM"
 					if (key=="ALM") {
-						res = res+'<li id="divider_cb" data-role="list-divider"><strong>'+value+'</strong><center><strong>Lunch</strong></center></li>';	
+						res = res+'<li id="divider_cb" data-role="list-divider" role="heading" class="ui-li-divider ui-bar-inherit">'+value+' - Lunch';
 					}else{
-
+						var hour = key.split(":")[0];
 						res = res+startLiHorario+value+endLi;
+						// se eu botar um div funfa? :D
+						// crio o div pra "dar append"
+						/*res = res+"<div id='h_"+hour+"'></div>"; */
+						// vai atuar como um flag pra eu dar replaceWith depois
+						res = res+"<div id='h_"+hour+"'></div>";  
 						
-						// se não for CB ou ALM então BUSCA E ADICIONA os eventos daquele horário
-										// for pra criar as linhas dentro de um horário daquele dia.
-						// vai pegar cada evento do horário X (se não for CB e ALM)
-			 
-						// vai retornar uma lista com programs e events no banco
-						// acho que ao invés de data vai ser um chave-valor
-						for (data in listEvent) {
-							if (compare(">=",startTime,key)){
-								// cria a entrada	
-								res = res+startLiLine;
-								res = res+startA.format(data.id_event,'event');
-										// nome do evento
-								res=res+'<p>'+data.name+'</p>'+ 
-										// local
-				    					'<p><strong>'+data.location+'</strong></p>'+ 
-				    					//hora do evento
-				    					'<p class="ui-li-aside"><strong>'+data.startTime+"-"+data.endTime+'</strong></p>'; 
-								res = res+"</a>"+endLi;
-							}
-						} 
-						for (data in listProgram) {
-							if (compare(">=",data.startTime,key)){
-								// cria a entrada	
-								res = res+startLiLine;
-								res = res+startA.format(data.id_program,'program');
-								// tipo de programa
-								'<h2>'+data.type+'</h2>'+
-								// nome do programa
-								'<p>'+data.name+'</p>'+
-								// local do programa
-				    			'<p><strong>'+data.location+'</strong></p>'+ 
-				    			//hora do programa
-				    			'<p class="ui-li-aside"><strong>'+data.startTime+"-"+data.endTime+'</strong></p>';
-								//fecha a
-								res = res+"</a>"+endLi;
-							}
+						// preciso colocar isso fora.		
+						/*addScheduleByDay(hour,day,'program');
+						addScheduleByDay(hour,day,'event');*/
 
-						} 
 					}
 				}
 
@@ -233,7 +340,30 @@ SOFTWARE.
 			// fecha Ul da lista de horários
 			res = res+endUl;
 			$("#div_program_day_detail").html(res);
-			
+			// depois percorro de novo a lista de horários e preencho os divs de acordo. 
+			// sincronismo MY ASS! MUHAHAHAHAHAHA
+			for (key in listSchedule) {
+				if (key != "CB1" && key != "CB2" && key != "ALM"){
+					addScheduleByDay(key,day,'program');
+					addScheduleByDay(key,day,'event');
+				}
+			}
+			// POR QUE NAO FUNCIONA???
+			/*$('.line').listview().listview('refresh');*/
+			try{
+				/*$("#testUl").trigger('create');*/
+				/*$("#testUl").listview().listview('refresh');*/
+				$('#program_day_detail').trigger('pagecreate');
+			}catch (err){
+				console.log('err1: '+err.message);
+			}
+			try{
+				$('ul').enhanceWithin();
+			}catch (err){
+				console.log('err2: '+err.message);
+			}
+			/*$("ul").trigger('create');
+			$(".line").trigger('create');*/
 		}
 
 
@@ -250,6 +380,9 @@ SOFTWARE.
 		function teste(){
 			$('#program_title').text('ST1 - Educação e Games');
 		}
+
+
+
 	</script>
 	<style>
 		#divider_dia {background-color:rgb(138,192,255);}
@@ -302,6 +435,12 @@ SOFTWARE.
 		<a href="#program_day_detail" onclick="fill_program_day_detail('10/31/2014')" class="ui-btn">Friday, October 31th</a>
 	</div>
 </div>
+<script>
+	function replace(){
+		$("#repl").replaceWith('<li class="line"><a href="#program_detail" data-transition="pop"><h2>Sessao Técnica 1</h2><p>Aspectos Culturais em IHC e Semiótica</p><p><strong>Sala 1 - Auditorio Apagão</strong></p><p class="ui-li-aside"><strong>10:00-12:00</strong></p></a></li>');
+		$("ul").listview('refresh');
+	}
+</script>
 
 <div data-role="page" id="favorites">
 
@@ -309,53 +448,45 @@ SOFTWARE.
 		<h1>Favorites</h1>
 		<a href="#home" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Back</a>
 	</div>
-
 	<div role="main" class="ui-content" id="home-content">
-
-		<ul data-role="listview" data-inset="true" data-filter="true"	>
+		<button onclick="replace();">Replace</button>
+		<ul id="favorites_listview" data-role="listview" data-inset="true" data-filter="true">
 		<!-- Cada "list_divider" é gerado somente se há algum evento pra esta data nos favoritos (isso vai dar trabalho...)-->
 		<!-- 27/OUTUBRO -->
-	    	<li id="divider_dia" data-role="list-divider">Segunda, 27 de Outubro,2014
-	    	<!-- <li data-role="list-divider">09:00-10:00</li> -->
+	    	<li id="divider_dia" data-role="list-divider">Segunda, 27 de Outubro,2014</li>
+
 	    	<li class="line">
-	    		<!-- Na hora de criar estes eventos eu dou um append e crio o html na mão. aí coloco um onclick="addProgramDetails(id_program", aonde puxo tudo do evento e coloco na página details-program -->
 	    		<a href="#program_detail" onclick="fill_program_detail('1');" data-transition="pop" >
 	    		<h2>Sessao Técnica 1</h2>
 	    		<p>Aspectos Culturais em IHC e Semiótica</p>
 	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
 	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
 	    	</a></li>
+	    	<div id="repl"></div>
 	    	<li class="line">
-	    		<!-- Na hora de criar estes eventos eu dou um append e crio o html na mão. aí coloco um onclick="addProgramDetails(id_program", aonde puxo tudo do evento e coloco na página details-program -->
 	    		<a href="#program_detail" onclick="fill_program_detail('1');" data-transition="pop" >
 	    		<h2>Evento Genérico 2</h2>
 	    		<p>Educação e Games</p>
 	    		<p><strong>Sala 1 - Auditorio Luz do Dia</strong></p>
-	    		<!-- Aqui vai ter que ter horário. Pegar do banco na hora de construir isso -->
 	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
 	    	</a></li>
-	    	<li id="divider_dia" data-role="list-divider">Terça, 28 de Outubro,2014 </span>
-	    	<!-- <li data-role="list-divider">09:00-10:00</li> -->
+	    	<li id="divider_dia" data-role="list-divider">Terça, 28 de Outubro,2014 </span></li>
 	    	<li class="line">
-	    		<!-- Na hora de criar estes eventos eu dou um append e crio o html na mão. aí coloco um onclick="addProgramDetails(id_program", aonde puxo tudo do evento e coloco na página details-program -->
-	    		<!-- href=program_detail se program ou presentation -->
-	    		<!-- href = event_detail se evento  -->
-	    		<!-- (mas eu posso decidir isso no JS né?) -->
 	    		<a href="#program_detail" onclick="fill_program_detail('1');" data-transition="pop" >
-	    		<h2>Sessao Técnica 1</h2>
-	    		<p>Aspectos Culturais em IHC e Semiótica</p>
-	    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
-	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
-	    	</a></li>
+		    		<h2>Sessao Técnica 1</h2>
+		    		<p>Aspectos Culturais em IHC e Semiótica</p>
+		    		<p><strong>Sala 1 - Auditorio Apagão</strong></p>
+		    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
+	    		</a>
+	    	</li>
 	    	<li class="line">
-	    		<!-- Na hora de criar estes eventos eu dou um append e crio o html na mão. aí coloco um onclick="addProgramDetails(id_program", aonde puxo tudo do evento e coloco na página details-program -->
 	    		<a href="#program_detail" onclick="fill_program_detail('1');" data-transition="pop" >
-	    		<h2>Evento Genérico 2</h2>
-	    		<p>Educação e Games</p>
-	    		<p><strong>Sala 1 - Auditorio Luz do Dia</strong></p>
-	    		<!-- Aqui vai ter que ter horário. Pegar do banco na hora de construir isso -->
-	    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
-	    	</a></li>
+		    		<h2>Evento Genérico 2</h2>
+		    		<p>Educação e Games</p>
+		    		<p><strong>Sala 1 - Auditorio Luz do Dia</strong></p>
+		    		<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
+	    		</a>
+	    	</li>
 		</ul>
 	</div>
 </div>
@@ -369,6 +500,7 @@ SOFTWARE.
 	</div>
 	
 	<div role="main" class="ui-content">
+		<button onclick="$('#testUl').enhanceWithin();">Refresh</button>
 	    <h2 id="program_day_detail_title"> </h2>
 	    <!-- AQUI dentro vai ser colocado as informações vindas do banco -->
 	    <div id="div_program_day_detail"> 
@@ -415,7 +547,6 @@ SOFTWARE.
 	    				<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
 	    			</a>
 	    		</li>
-	    			
 	    </ul>
 	</div>
 		<!-- Aqui eu puxo os dados pra preencher a página antes de abrir. -->
