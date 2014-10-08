@@ -49,7 +49,19 @@ SOFTWARE.
 	<!-- <script type="text/javascript" src="js/program_detail.js"></script> -->
 	<!-- <script type="text/javascript" src="js/program_day_detail.js"></script> -->
 <script type="text/javascript">
-
+		// trying to make this global.
+		//need to fill this in. (in the future from the database)
+			var listDay = {"10/27/2014":{"08:30":"08:30-10:00",
+										 "CB1":"10:00-10:30",
+										 "10:30":"10:30-12:00",
+										 "ALM":"12:00-14:00",
+										 "14:00":"14:00-15:30",
+										 "CB2":"15:30-16:00",
+										 "16:00":"16:00-17:30"			 
+										},
+							"10/28/2014":{"08:00":"08:30-10:00"},
+							};
+			
 				// First, checks if it isn't implemented yet.
 		
 		if (!String.prototype.format) {
@@ -63,7 +75,14 @@ SOFTWARE.
 		  };
 		}
 
-		function compare(startTime,endTime,timeSchedule){
+		function toMin(hour){
+			var listHour = hour.split(":");
+			var res =(parseInt(listHour[0])*60)+parseInt(listHour[1]);
+			console.log(hour+": "+res+" minutes");
+			return res;
+		}
+
+		function compare(startTime,endTime,timeSchedule,listSchedule){
 			
 			// verifica se o horário está dentro do timeSchedule
 			// pra isso preciso dar split neles e fazer a comparação
@@ -71,29 +90,50 @@ SOFTWARE.
 			var splitEndTime = endTime.split(":");
 			var splitTimeSchedule = timeSchedule.split(":");
 			var ret = false;
+
+			var sTime = toMin(startTime);
+			var eTime = toMin(endTime);
 			// agora preciso comparar 
+			// lista com startTime e endTime do time-frame
 			
-			// regras
-			// se startTime >= timeSchedule, retorna true
-			// se endTime é estritamente maior que timeSchedule, retorna true
-			if (splitStartTime[0] >= splitTimeSchedule[0]){
-				console.log(splitStartTime[0]+">="+splitTimeSchedule);
-				ret = true;
+			try{
+				var listMoment = listSchedule[timeSchedule].split("-");
+			}catch(err){
+				console.log("erro é aqui:"+err.message);
+			}
+
+			var sTimeFrame = toMin(listMoment[0]);
+			var eTimeFrame = toMin(listMoment[1]);
+
+			if (sTime == sTimeFrame && eTime==eTimeFrame){
+				// caso comum
+				// e.g. sessão técnica.
+				ret == true;
 			}else{
-				if (splitEndTime[0] > splitTimeSchedule[0]){
-					console.log(splitEndTime[0]+">"+splitTimeSchedule[0]);
+				if(sTime < sTimeFrame && eTime > eTimeFrame){
+					//console.log("evento de mais de uma sessão e eu to no meio");
+					// e.g. evento já havia começado e dura o dia inteiro.
+					// e eu to no meio do dia.
 					ret = true;
 				}else{
-					// não deu.
-					console.log(splitEndTime[0]+"<="+splitTimeSchedule[0]);
-					ret= false;
+					if(sTime==sTimeFrame && eTime > eTimeFrame){
+						// evento começou na minha frame e termina depois dela
+						ret = true;
+					}else{
+						if(sTime < sTimeFrame && eTime == eTimeFrame){
+							// evento começou antes e termina na minha frame.
+							ret = true;
+						}else{
+							ret = false;
+						}
+					}
 				}
 			}
+
 			return ret;
 		}
 
-
-		function addEvent(hour,list){
+		function addEvent(hour,list,day){
 			var endLi = '</li>';
 			var startLiLine = '<li class="line">';
 			var startA = '<a href="#program_detail" onclick="fill_program_detail('+"'{0}"+"',"+'{1});" data-transition="pop" >';
@@ -105,21 +145,21 @@ SOFTWARE.
 			var h = "#h_"+hour;
 			for (var ind=0; ind<list.length; ind++){
 				var data = list[ind];
-				console.log('event: '+ind);
+				//console.log('event: '+ind);
 				var boo = false;
 				try{
-					boo = compare(data.startTime,data.endTime,hour);
+					boo = compare(data.startTime,data.endTime,hour,listDay[day]);
 				}catch (err){
-					console.log(err.message);
+					console.log(err.message + " data:"+data.startTime+","+data.endTime+","+hour+" id:"+data.id_event);
 				}
 				if (boo){
-					console.log("entrouEventCompare");
+					//console.log("entrouEventCompare");
 					// cria a entrada
 					res = res+startLiLine;
 					res = res+startA.format(data.id_event,"'event'");
 							// nome do evento
-					res=res+'<p>'+data.title+'</p>'+ 
-							'<p>'+data.description+'</p>'+ 
+					res=res+'<p>'+data.type+'</p>'+ 
+							'<p>'+data.title+'</p>'+ 
 							// local
 	    					'<p><strong>'+data.location+'</strong></p>'+ 
 	    					//hora do evento
@@ -129,13 +169,11 @@ SOFTWARE.
 				}			
 			}
 
-			/*console.log("res: "+res);*/
-			
 			$("#h_"+hour.split(":")[0]).before(res);
 			$("ul").listview().listview('refresh');
 		}
 
-		function addProgram(hour,list){
+		function addProgram(hour,list,day){
 			//console.log("addProgram");
 			var endLi = '</li>';
 			var startLiLine = '<li class="line">';
@@ -144,29 +182,41 @@ SOFTWARE.
 			// dou um replace na hora 
 			//(mas qual é a hora que eu estou querendo dar replace?)
 
-/*		for (var i=0; i<list.length; i++){
+		for (var i=0; i<list.length; i++){
+				console.log('program loop ');
 				console.log('program '+i);
 				var data = list[i];
-				if (compare(data.startTime,data.endTime,hour)){
-						//console.log('compareOKProgram');
-						// cria a entrada	
-						res = res+startLiLine;
-						res = res+startA.format(data.id_program,'program');
-						// tipo de programa
-						res=res+'<h2>'+data.type+'</h2>'+
-						// nome do programa
-						'<p>'+data.name+'</p>'+
-						// local do programa
-		    			'<p><strong>'+data.location+'</strong></p>'+ 
-		    			//hora do programa
-		    			'<p class="ui-li-aside"><strong>'+data.startTime+"-"+data.endTime+'</strong></p>';
-						//fecha a
-						res = res+"</a>"+endLi;
+				var boo = false;
+				var res = "";
+				try{
+					boo = compare(data.startTime,data.endTime,hour,listDay[day]);
+				}catch (err){
+					console.log(err.message + " data:"+data.startTime+","+data.endTime+","+hour+" id:"+data.id_program);
 				}
-			}*/
+				if (boo){
+						try{
+						console.log('compareOKProgram');
+							// cria a entrada	
+							res = res+startLiLine;
+							res = res+startA.format(data.id_program,"'program'");
+							// tipo de programa
+							res=res+'<h2>'+data.type+'</h2>'+
+							// nome do programa
+							'<p>'+data.name+'</p>'+
+							// local do programa
+			    			'<p><strong>'+data.location+'</strong></p>'+ 
+			    			//hora do programa
+			    			'<p class="ui-li-aside"><strong>'+data.startTime+"-"+data.endTime+'</strong></p>';
+							//fecha a
+							res = res+"</a>"+endLi;
+						}catch (err){
+							console.log("ERROR: "+err.message);
+						}
+				}
+			}
 			// insertBefore
-
-			$("#h_"+hour).before(res);
+			console.log(res);
+			$("#h_"+hour.split(":")[0]).before(res);
 			$("ul").listview().listview('refresh');
 		}
 
@@ -193,6 +243,7 @@ SOFTWARE.
 				var listEvent= new Array();
 				var listProgram = new Array();
 				var isEvent = true;
+				
 
 				// results is a http://dev.w3.org/html5/webdatabase/#sqlresultset
 				var res = new Array();
@@ -218,9 +269,10 @@ SOFTWARE.
 			    /*console.log(listEvent);*/
 			    /*console.log(listProgram);*/
 			    if (isEvent){
-			    	addEvent(hour,listEvent);	
+			    	addEvent(hour,listEvent,day);	
 			    }else{
-			    	addProgram(hour,listProgram);
+			    	console.log("addProgram");
+			    	addProgram(hour,listProgram,day);
 			    }
 			    /*$("ul").listview().listview('refresh');*/
 			}
@@ -250,27 +302,190 @@ SOFTWARE.
 			ihc.app.initialize();
 		}
 
+		function fill_program_detail(){
+
+		}
+
 		function fill_presentation_detail(id_presentation)
 		{	
-			var techSession = "Technical Session";
-			$("#presentation_detail_title").text(techSession);
-			$("#pres_program_detail_type").html("<strong>"+techSession+"</strong>");
-			$("#pres_program_detail_name").text("Education and Games");
-			$("#presentation_name").text("Teacher's Presence Mediated by Virtual Learning Environment Interfaces: Evidences of the Self");
-			$("#presentation_time").text("Horário: 08:00 - 18:00");
-			$("#presentation_local").text("Local: Sala Apagão");
-			$("#presentation_authors").append("Luciana Espindola<br>Milene Silveira");
-			$("#presentation_abstract").append("<strong>Abstract:</strong><br>Not available.");
-			
+			id_presentation = "1";
+			function success(tx,results){
+				var p = results.rows.item(0);
+
+				var program_title = p.program_type;
+				var program_type = program_title;
+				var program_name = p.program_name;
+				var name = p.pTitle;
+				var time = "Time: "+p.preSTime+"-"+p.preETime;
+				var location = "Location: "+ p.pLocation;				
+				var abstract;
+
+				if (p.abstract){
+					abstract = "<strong>Abstract:</strong><br>"+p.abstract;
+				}else{
+				   abstract = "<strong>Abstract:</strong><br>Not available.";
+				}
+				
+				$("#presentation_detail_title").text(program_title);
+				$("#pres_program_detail_type").html("<strong>"+program_type+"</strong>");
+				$("#pres_program_detail_name").text(program_name);
+				$("#presentation_name").text(name);
+				$("#presentation_time").text(time);
+				$("#presentation_local").text(location);
+				
+				$("#presentation_abstract").html(abstract);
+
+				// será que há sincronia assim? O.o
+				var sql = 	"select pa.id_presentation, "+
+							"a.id_author, a.name as name, "+
+							"a.afiliation "+
+							"from presentation_author pa "+
+								"inner join author a on (a.id_author = pa.id_author) "+
+								"inner join presentation p on (p.id_presentation = pa.id_presentation)"+
+							" where p.id_presentation = ?  ORDER BY pa.author_number";
+
+				tx.executeSql(sql,[p.id_presentation],
+					function (tx,results){
+
+						try{
+							var res = "<strong>Authors:</strong> <p>";
+						for (var i=0;i<results.rows.length;i++){
+							var a_name = results.rows.item(i).name;
+							var afiliation= "";
+							//results.rows.item(i).afiliation;
+							if (results.rows.item(i).afiliation){
+								afiliation = "("+results.rows.item(i).afiliation+")";
+							}
+							res = res+a_name+afiliation+"<br>";
+						}
+						res = res+"</p>";
+						console.log(res);
+						$("#presentation_authors").html(res);	
+						}catch (err){
+							console.log("errro author: "+err.message);
+						}
+
+					},function (tx,err){ console.log("ERRORIHC: "+err.message); });
+
+			}
+
+			var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ /*console.log("deu BOM no banco");*/},function(tx,res){ console.log("deu RUIM no banco");});
+			var sql = "SELECT p.id_program as id_program, "+
+						"p.type as program_type, "+
+						"p.name as program_name, "+
+						"p.startTime as pStartTime, "+
+						"p.endTime as pEndTime, "+
+						"p.location as pLocation, "+
+						"p.date as pDate, "+
+						"pre.id_presentation as id_presentation, "+
+						"pre.title as pTitle, "+
+						"pre.abstract as abstract, "+
+						"pre.startTime as preSTime, "+
+						"pre.endTime as preETime, "+
+						"pre.type as preType "+
+					  	"FROM presentation pre inner join program p on (pre.id_program = p.id_program)"
+					  +" where id_presentation=?";
+			db.transaction(function (tx){
+				tx.executeSql(sql, [id_presentation], success,
+			            function (tx,err){
+			            	console.log("ERRORIHC: "+err.message);
+			            });
+			});
+
+
 		}
+
+		function fill_event_detail(id_event)
+		{	
+
+			id_event = "1";
+			function success(tx,results){
+				var p = results.rows.item(0);
+				/*for (var i=0; i < results.rows.length; i++){*/
+			    /*var item = results.rows.item(i);*/
+
+
+				var event_title = p.title;
+				var event_type = p.type;
+				var event_description = p.description;
+				var time = "Time: "+p.startTime+"-"+p.endTime;
+				var location = "Location: "+ p.location;
+				
+				//var authors = "<div id='pres_authors'></div>";
+
+				var abstract;
+				if (p.abstract){
+					abstract = "<strong>Abstract:</strong><br>"+p.abstract;
+				}else{
+				   abstract = "<strong>Abstract:</strong><br>Not available.";
+				}
+
+			/*event_title;
+			event_detail_name;
+			event_local;
+			event_time;
+			event_author;
+			event_abstract;*/
+				
+				$("#event_title").text(type);
+				$("#event_detail_name").html(title);
+				$("#event_local").text(location);
+				$("#event_time").text(time);
+				$("#event_description").html(event_description);
+
+				// será que há sincronia assim? O.o
+				var sql = 	"select pa.id_event, "+
+							"a.id_author, a.name as name, "+
+							"a.afiliation "+
+							"from event_author pa "+
+								"inner join author a on (a.id_author = pa.id_author) "+
+								"inner join event p on (p.id_event = pa.event)"+
+							" where p.id_event = ? ORDER BY pa.author_number";
+
+				tx.executeSql(sql,[p.id_event],
+					function (tx,results){
+
+						try{
+							var res = "<strong>Organizers:</strong> <p>";
+						for (var i=0;i<results.rows.length;i++){
+							var a_name = results.rows.item(i).name;
+							var afiliation= "";
+							//results.rows.item(i).afiliation;
+							if (results.rows.item(i).afiliation){
+								afiliation = "("+results.rows.item(i).afiliation+")";
+							}
+							res = res+a_name+afiliation+"<br>";
+						}
+						res = res+"</p>";
+						console.log(res);
+						$("#event_author").html(res);	
+						}catch (err){
+							console.log("errro author: "+err.message);
+						}
+
+					},function (tx,err){ console.log("ERRORIHC: "+err.message); });
+
+			}
+
+			var db = window.sqlitePlugin.openDatabase({name: "ihc.db"},function(tx,res){ /*console.log("deu BOM no banco");*/},function(tx,res){ console.log("deu RUIM no banco");});
+			var sql = "SELECT *"+
+					  "FROM event "+
+					  " where id_event=?";
+			db.transaction(function (tx){
+				tx.executeSql(sql, [id_presentation], success,
+			            function (tx,err){
+			            	console.log("ERRORIHC: "+err.message);
+			            });
+			});
+
+		}
+
+
 
 		function fill_program_day_detail(day)
 		{	
-			// remove on final version
-			var day = '10/27/2014';
 
-			//program_day_detail_title
-			//div_program_day_detail
+
 			var startUl='<ul id="testUl" data-role="listview" data-inset="true" data-filter="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
 			var endUl= '</ul>';
 			// ao final deste é preciso inserir horário
@@ -278,21 +493,6 @@ SOFTWARE.
 			var endLi = '</li>';
 			var startLiLine = '<li class="line">';
 			var startA = '<a href="#program_detail" onclick="fill_program_detail('+"'{0}"+"',"+'{1});" data-transition="pop" >';
-
-
-			//need to fill this in. (in the future from the database)
-			var listDay = {"10/27/2014":{"08:30":"08:30-10:00",
-										 "CB1":"10:00-10:30",
-										 "10:30":"10:30-12:00",
-										 "ALM":"12:00-14:00",
-										 "14:00":"14:00-15:30",
-										 "CB2":"15:30-16:00",
-										 "16:00":"16:00-17:30"			 
-										},
-							"10/28/2014":{"08:00":"08:30-10:00"},
-							};
-
-			
 
 			var listSchedule = listDay[day];
 
@@ -318,16 +518,9 @@ SOFTWARE.
 					}else{
 						var hour = key.split(":")[0];
 						res = res+startLiHorario+value+endLi;
-						// se eu botar um div funfa? :D
-						// crio o div pra "dar append"
-						/*res = res+"<div id='h_"+hour+"'></div>"; */
-						// vai atuar como um flag pra eu dar replaceWith depois
+						// div "flag"
 						res = res+"<div id='h_"+hour+"'></div>";  
 						
-						// preciso colocar isso fora.		
-						/*addScheduleByDay(hour,day,'program');
-						addScheduleByDay(hour,day,'event');*/
-
 					}
 				}
 
@@ -345,40 +538,56 @@ SOFTWARE.
 					addScheduleByDay(key,day,'event');
 				}
 			}
-			// POR QUE NAO FUNCIONA???
-			/*$('.line').listview().listview('refresh');*/
-			/*try{*/
-				/*$("#testUl").trigger('create');*/
-				/*$("#testUl").listview().listview('refresh');*/
-				/*$('#program_day_detail').trigger('pagecreate');
-			}catch (err){
-				console.log('err1: '+err.message);
-			}
-			try{
-				$('ul').enhanceWithin();
-			}catch (err){
-				console.log('err2: '+err.message);
-			}*/
-			/*$("ul").trigger('create');
-			$(".line").trigger('create');*/
 		}
 
+		function fill_program_detail(id_program) {
+			var res = "";
+			var pres_list = "<strong>Presentation List:</strong>"; 
+		    var ul = '<ul data-role="listview" data-inset="true" data-filter="true">';
+		   		var line = '<li class="line" data-icon="false">';
+		    		var aPresentation = '<a href="#presentation_detail" onclick="fill_presentation_detail({0});" data-transition="pop" >'
+		    			var title = '<div style="width:80%;"><h3>{0}</h3></div>';
+		    			var authors = '<div id ="pres_authors_{0}">';
+						var time ='<p class="ui-li-aside"><strong>{0}</strong></p>';
+						var endA = '</a>';	
+		    		var endLi = '</li>';
+		    var endUl = '</ul>';		
+		    
+			function successProgram(tx,results){
+				$("#program_detail_page_title").html();
+				$("#program_detail_type").html();
+				$("#program_detail_name").html();
+				$("#program_detail_time").html();
+			}
 
-		function fill_event_detail(id_event){
-			/*event_title;
-			event_detail_name;
-			event_local;
-			event_time;
-			event_author;
-			event_abstract;*/
+		    //consulta1
+		    function successPresentationList(tx,results){
+		    	res = pres_list+ul;
+		    	for (int i=0;i<results.rows.length;i++){
+		    		var res = results.rows.item(i);
+		    		//preenche
+		    		res = res+line;
+		    		res = res+aPresentation.format(res.id_presentation);
+		    		res = res+title.format(res.title);
+		    		res = res+authors.format(res.id_presentation);
+		    		res = res+time.format(res.startTime+"-"+res.endTime);
+		    		res = res+endA;
+		    		res = res.endLi;
+		    	}
+		    	res = res+endUl;
+		    }
 
-		} 
+		    function successAuthors(tx,results){
+
+		    }
+
+
+		}
+
 
 		function teste(){
 			$('#program_title').text('ST1 - Educação e Games');
 		}
-
-
 
 	</script>
 	<style>
@@ -509,48 +718,17 @@ SOFTWARE.
 <!-- PROGRAM_DETAIL PAGE -->
 <div data-role="page" id="program_detail">
 	<div data-role="header" data-position="fixed">
-		<h1 id="program_title">Generic Text</h1>
+		<h1 id="program_detail_page_title"></h1>
 		<a href="#program_day_detail" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Back</a>
 	</div>
 	<div role="main" class="ui-content" id="home-content">
-		<strong id="program_detail_type">Technical Session</strong>
-		<br><span id="program_detail_name">1- Education and Games</span>
+		<strong id="program_detail_type"></strong>
+		<br><span id="program_detail_name"></span>
+		<br><strong>Time:</strong><span id="program_detail_time"></span>
 		<p></p>
-		<strong>Presentation List:</strong>
-	 <div id="div_program_day_detail"> 
-	    <ul data-role="listview" data-inset="true" data-filter="true">
-	    		<!-- <li data-role="list-divider">09:00-10:00</li> -->
-	    		<li class="line" data-icon="false">
-	    			<a href="#presentation_detail" onclick="fill_presentation_detail('1');" data-transition="pop" >
-	    				<div style="width:80%;"><h3>Teacher's Presence Mediated by Virtual Learning Environment Interfaces: Evidences of the Self</h3></div>
-						<p>Luciana Espindola<br>
-						Milene Silveira </p>
-	    				<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
-	    			</a>
-	    		</li>
-	    		<li class="line" data-icon="false">
-	    			<a href="#presentation_detail" onclick="fill_presentation_detail('2');" data-transition="pop" >
-	    				<div style="width:80%;"><h3>Teacher's Presence Mediated by Virtual Learning Environment Interfaces: Evidences of the Self</h3></div>
-						<p>Luciana Espindola<br>
-						Milene Silveira </p>
-	    				<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
-	    			</a>
-	    		</li>
-	    		<li class="line" data-icon="false">
-	    			<a href="#presentation_detail" onclick="fill_presentation_detail('1');" data-transition="pop" >
-	    				<div style="width:80%;"><h3>Teacher's Presence Mediated by Virtual Learning Environment Interfaces: Evidences of the Self</h3></div>
-						<p>Luciana Espindola<br>
-						Milene Silveira </p>
-	    				<p class="ui-li-aside"><strong>10:00-12:00</strong></p>
-	    			</a>
-	    		</li>
-	    </ul>
+	<div id="div_program_detail"> 
+
 	</div>
-		<!-- Aqui eu puxo os dados pra preencher a página antes de abrir. -->
-		<!-- <h2>Presentions in this "Event</h2>
-		<h3>Teacher's Presence Mediated by Virtual Learning Environment Interfaces: Evidences of the Self</h3>
-		Luciana Espindola<br>
-		Milene Silveira -->
 		
 	</div>
 	<!-- I could add a footer if I want. But I don't. Deal. With. It. -->
@@ -576,23 +754,18 @@ SOFTWARE.
 
 <div data-role="page" id="event_detail">
 	<div data-role="header" data-position="fixed">
-		<h1 id="event_title">Event</h1>
+		<h1 id="event_title"></h1>
 		<a href="#program_detail" data-icon="arrow-l" data-transition="slideup" class="ui-btn-left">Back</a>
 	</div>
 	<div role="main" class="ui-content" id="home-content">
-		<br><h2 id="event_detail_name">V Workshop de Ensino de IHC</h2>
-		
-		<p><div id="event_local">Local: Sala Apagão</div>
-			<div id="event_time">Horário: 08:00 - 18:00</div>
+		<br><h2 id="event_detail_name"></h2>
+		<p><div id="event_local"></div>
+			<div id="event_time"></div>
 		</p>
 		<div id="event_author">
-			<strong>Organizers:</strong><br>
-			Clodis Boscarioli<br>
-			S. Amelia Bim</div>
 		<p>
-		<div id="presentation_abstract">
-			<strong>About:</strong>
-			<br>More details at http://www.serg.inf.puc-rio.br.
+		<strong>About:</strong>
+		<div id="event_description">
 		</div>
 	</div>
 	<!-- I could add a footer if I want. But I don't. Deal. With. It. -->
